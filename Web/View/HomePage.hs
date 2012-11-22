@@ -6,5 +6,5 @@ where
 
 import qualified Web.WebHelper as WebHelper
 
-render user = ["<html>","<body>","Hi", user,"</body>","</html>"] 
+render user = ["<html>","<body>","Hi ", user,"</body>","</html>"] 
 

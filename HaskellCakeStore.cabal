@@ -13,6 +13,7 @@ executable cakeStore
                    http-types == 0.7.3.0.1,
                    conduit == 0.5.2.3,
                    transformers == 0.2.2.0,
-                   utf8-string == 0.3.7
+                   utf8-string == 0.3.7,
+                   operational == 0.2.1.3
 
 
