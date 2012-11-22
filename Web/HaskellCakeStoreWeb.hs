@@ -4,14 +4,11 @@ where
 
 
 import Network.Wai as Wai
-import Web.WebHelper as WebHelper
-import Blaze.ByteString.Builder as BlazeBuilder
-import Data.Monoid
+import qualified Web.Handler.HomePage as HomePage
+
 
 app :: Wai.Application
-app request = WebHelper.plainResponse builder 
+app request = HomePage.handle request
 
-builder :: BlazeBuilder.Builder
-builder = mempty
 
 
