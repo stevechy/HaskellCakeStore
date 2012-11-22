@@ -5,16 +5,12 @@ where
 {-# LANGUAGE OverloadedStrings #-}
 
 import qualified Web.WebHelper as WebHelper
-import Blaze.ByteString.Builder as BlazeBuilder
-import Data.ByteString.Lazy.UTF8
-import Data.Monoid
+import qualified Web.View.HomePage as HomePageView
 import qualified Service.Users as Users
 
-handle request = WebHelper.plainResponse builder
+handle request = WebHelper.plainResponse $ WebHelper.toBuilder $ HomePageView.render $ Users.getUser
 
-builder :: BlazeBuilder.Builder
-builder = mconcat (map (fromLazyByteString . fromString) content)
 
-content = ["<html>","<body>","Hi", Users.getUser ,"</body>","</html>"] 
+
 
 
