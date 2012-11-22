@@ -1,0 +1,16 @@
+name:    HaskellCakeStore
+version: 0.0
+synopsis : A haskell web app
+build-type : Simple
+cabal-version: >= 1.2
+
+executable cakeStore
+    main-is: Main.hs
+    build-depends: base >= 4.3.0.0,
+                   warp >= 1.3.0,
+                   wai == 1.3.*,
+                   blaze-builder == 0.3.1.0,
+                   http-types == 0.7.3.0.1,
+                   conduit == 0.5.2.3,
+                   transformers == 0.2.2.0
+
