@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Web.Handler.HomePage
-(handle, handleMonad)
+(handleMonad)
 where
 
 import qualified Web.WebHelper as WebHelper
@@ -11,7 +11,6 @@ import qualified Web.HandlerMonad as HandlerMonad
 import Data.ByteString.Lazy.UTF8
 import qualified Service.ServiceHandler as ServiceHandler
 
-handle request = WebHelper.plainResponse $ WebHelper.toBuilder $ HomePageView.render $ Users.getUser
 
 handleMonad :: HandlerMonad.HandlerMonad ()
 handleMonad = do
