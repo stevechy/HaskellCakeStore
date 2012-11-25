@@ -4,7 +4,9 @@ import qualified Web.HaskellCakeStoreWeb as Web
 port = 8080
 
 main :: IO ()
-main = Warp.run port Web.app
+main = do
+  print $ "Running webserver on port " ++ (show port)
+  Warp.run port Web.app
 
 
 

@@ -10,7 +10,7 @@ where
 import qualified Service.Users as Users
 
 handle :: ServiceCall a -> IO a
-handle GetUser = return Users.getUser
+handle GetUser =  Users.getUser
 
 logHandle :: ServiceCall a -> IO a
 logHandle call = do

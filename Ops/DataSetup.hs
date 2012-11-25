@@ -2,13 +2,21 @@
 import Database.HDBC 
 import Database.HDBC.Sqlite3
 import System.Environment
+import qualified Configuration.Util as ConfigurationUtil
+import qualified Configuration.Types as ConfigurationTypes
 
 main :: IO ()
 main = do
      args <- getArgs
-     let databaseFile = head args
-     print $ "Connecting to sqlite3 database :" ++ databaseFile
-     conn <- connectSqlite3 "test1.db"
+     let configFile = head args
+     print $ "Reading config file " ++ configFile
+     maybeConfiguration <- ConfigurationUtil.readConfiguration configFile
+     case maybeConfiguration of
+     	  Just configuration -> runConfiguration configuration
+          Nothing -> return ()
+
+runConfiguration configuration = do
+     conn <- connectSqlite3 $ ConfigurationTypes.databaseFile $ configuration
      tables <- getTables conn
      print tables
      withTransaction conn $ createTest tables
