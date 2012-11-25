@@ -15,7 +15,7 @@ import qualified Service.ServiceHandler as ServiceHandler
 handleMonad :: HandlerMonad.HandlerMonad ()
 handleMonad = do
       user <- HandlerMonad.callService ServiceHandler.getUser
-      HandlerMonad.renderView $ WebHelper.toBuilder $ HomePageView.render $ user
+      HandlerMonad.renderView $ HomePageView.render $ user
       return ()
 
 

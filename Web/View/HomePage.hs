@@ -1,10 +1,23 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Web.View.HomePage
 (render)
 where
 
-{-# LANGUAGE OverloadedStrings #-}
 
-import qualified Web.WebHelper as WebHelper
 
-render user = ["<html>","<body>","Hi ", user,"</body>","</html>"] 
+import Text.Blaze.Html4.Strict
+import Text.Blaze.Html4.Strict.Attributes 
+import qualified Text.Blaze.Html4.Strict as H
+import qualified Text.Blaze.Html4.Strict.Attributes as A
+import Text.Blaze.Html.Renderer.Utf8
+import Data.ByteString
+import Data.ByteString.Lazy.UTF8
+import Data.Monoid 
+
+render user =  renderHtmlBuilder $ docTypeHtml $ do 
+  H.head $ do
+    H.title "Haskell Cake Store Home Page"
+  body $ do    
+    p (mappend "Hi" $ toHtml user)
 
