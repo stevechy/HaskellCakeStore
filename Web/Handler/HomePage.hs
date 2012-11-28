@@ -9,12 +9,12 @@ import qualified Web.View.HomePage as HomePageView
 import qualified Service.Users as Users
 import qualified Web.HandlerMonad as HandlerMonad
 import Data.ByteString.Lazy.UTF8
-import qualified Service.ServiceHandler as ServiceHandler
+import qualified Service.Users
 
 
 handleMonad :: HandlerMonad.HandlerMonad ()
 handleMonad = do
-      user <- HandlerMonad.callService ServiceHandler.getUser
+      user <- HandlerMonad.callService Service.Users.getUser
       HandlerMonad.renderView $ HomePageView.render $ user
       return ()
 

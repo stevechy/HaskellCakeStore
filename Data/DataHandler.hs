@@ -6,6 +6,7 @@ DataCall)
 where
 
 import qualified Data.Users as Users
+import qualified Configuration.Types
 
 
 handle :: DataCall a -> IO a

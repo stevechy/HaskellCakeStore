@@ -5,10 +5,14 @@ module Service.Users
 where
   
 import qualified Data.Users
+import qualified Service.ServiceHandler
   
-getUser = do
-  users <- Data.Users.getUsers
-  return $ head users
+getUser = Service.ServiceHandler.ServiceCall {
+  Service.ServiceHandler.name = "getUser",
+  Service.ServiceHandler.execution = do
+    users <- Data.Users.getUsers
+    return $ head users
+  }
   
 
 
