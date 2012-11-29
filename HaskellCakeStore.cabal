@@ -16,7 +16,8 @@ executable cakeStore
                    conduit == 0.5.2.3,
                    transformers == 0.2.2.0,
                    utf8-string == 0.3.7,
-                   operational == 0.2.1.3
+                   operational == 0.2.1.3,
+                   stm == 2.2.0.1
 
 executable databaseSetup
    main-is: Ops/DataSetup.hs

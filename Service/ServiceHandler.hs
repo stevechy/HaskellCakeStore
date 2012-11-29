@@ -7,6 +7,7 @@ ServiceCall(..))
 where
 
 import Control.Monad.Operational
+import qualified Data.DataHandler
 
 
 handle :: ServiceCall a -> IO a
