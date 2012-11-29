@@ -6,7 +6,8 @@ port = 8080
 main :: IO ()
 main = do
   print $ "Running webserver on port " ++ (show port)
-  Warp.run port Web.app
+  app <- Web.buildApp
+  Warp.run port app
 
 
 
