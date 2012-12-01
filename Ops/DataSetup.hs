@@ -25,9 +25,9 @@ runConfiguration configuration = do
 createTest tables conn =     
     if not $ elem "test" tables
          then do
-                run conn "CREATE TABLE test (id INTEGER NOT NULL, desc VARCHAR(80))" []
-                run conn "INSERT INTO test (id) VALUES (0)" []
-                query <- quickQuery' conn "SELECT * from test where id < 2" []
+                run conn "CREATE TABLE users (id INTEGER NOT NULL, name VARCHAR(256))" []
+                run conn "INSERT INTO users (id, name) VALUES (0, 'DatabaseBob')" []
+                query <- quickQuery' conn "SELECT * from users where id < 2" []
                 print query
                 return ()
          else return ()

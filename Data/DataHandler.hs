@@ -2,7 +2,9 @@
 
 module Data.DataHandler
 (handle,
-DataCall)
+ setupDataMonad,
+DataCall,
+DataConfiguration)
 where
 
   
@@ -23,8 +25,10 @@ data DataConfiguration = DataConfiguration { databaseFile :: String }
 
 data DataInstruction a
     where CallData :: DataCall a -> DataInstruction a
+          GetConnection :: (IConnection a) => DataInstruction a
 
 type DataMonad a = Program DataInstruction a
+
 
 runDataMonad :: DataMonad a -> IO a
 runDataMonad = eval.view
@@ -40,3 +44,5 @@ setupDataMonad :: Configuration.Types.Configuration -> IO (TVar DataConfiguratio
 setupDataMonad config = do
   configuration <- atomically $ newTVar $ DataConfiguration { databaseFile =  "config" }
   return configuration
+  
+  
