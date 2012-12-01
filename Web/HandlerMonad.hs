@@ -2,10 +2,10 @@
 
 module Web.HandlerMonad
 (renderView, 
-getUser,
 HandlerMonad,
 runHandlerMonad,
-callService)
+callService,
+simpleResponse)
 where
 
 import Control.Monad.Operational
@@ -22,11 +22,9 @@ import qualified Service.ServiceHandler as ServiceHandler
 
 data HandlerInstruction a
    where RenderView :: BlazeBuilder.Builder -> HandlerInstruction ()
-         GetUser :: HandlerInstruction String
          CallService :: ServiceHandler.ServiceCall a -> HandlerInstruction a
 
 renderView content = singleton $ RenderView content
-getUser = singleton GetUser
 callService call = singleton $ CallService $ call
 
 type HandlerMonad a = Program HandlerInstruction a
@@ -40,7 +38,6 @@ runHandlerMonadWithState state = eval . view
 		eval :: ProgramView (HandlerInstruction) a -> Conduit.ResourceT IO Wai.Response
 		eval (Return x) = plainResponse $ state
 		eval (RenderView s :>>= k) = runHandlerMonadWithState (mappend state s) $ k $ () 
-		eval (GetUser :>>= k) = runHandlerMonadWithState state $ k $ "User"
                 eval (CallService call :>>= k) = do
 		     callResult <- liftIO $ runServiceCall call
 		     runHandlerMonadWithState state $ k $ callResult
@@ -49,6 +46,6 @@ runHandlerMonadWithState state = eval . view
 runServiceCall :: ServiceHandler.ServiceCall a -> IO a
 runServiceCall call = ServiceHandler.handle call
 
-
-
+simpleResponse :: Wai.Response 
+simpleResponse = plainResponseValue $ toBuilder $ ["Hi", "Bye"]
 

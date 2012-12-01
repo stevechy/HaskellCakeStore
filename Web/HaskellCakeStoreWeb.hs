@@ -10,6 +10,8 @@ import qualified Data.Conduit as Conduit
 import qualified Configuration.Types
 import qualified Data.DataHandler
 import qualified Service.ServiceHandler 
+import Control.Monad.Trans.Class (lift)
+import qualified Web.WebHelper
 
 data AppConfiguration a = AppConfiguration { responseHandler ::  (HandlerMonad a -> Conduit.ResourceT IO Wai.Response) }
 
@@ -20,8 +22,10 @@ buildApp configuration = do
   return app
 
 app :: Wai.Application
---app request = HomePage.handle request
-app request = HandlerMonad.runHandlerMonad HomePage.handleMonad
-
+app request = case pathInfo request of
+  [] -> HandlerMonad.runHandlerMonad HomePage.handleMonad
+  path@_ -> do
+    lift $ print $ "Not found " ++ (show path)
+    return $ Web.WebHelper.notFoundValue $ Web.WebHelper.toBuilder ["Not Found"]
 
 

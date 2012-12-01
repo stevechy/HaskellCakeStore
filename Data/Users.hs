@@ -1,15 +1,29 @@
 {-# LANGUAGE NoMonomorphismRestriction  #-}
 module Data.Users
-(getUsers)
+(getUsers, getUsersCall)
 
 where
   
   
 import Database.HDBC 
-import Database.HDBC.Sqlite3
+import qualified Data.DataHandler
 
 getUsers = return ["User1", "User2"]
 
-selectUsers = do
-  return ()
+getUsersCall = Data.DataHandler.DataCall {
+  Data.DataHandler.name = "getUsersCall",
+  Data.DataHandler.execution = selectUsers
+  }
 
+selectUsers = do
+  users <- selectUsersTransaction
+  return users
+  
+selectUsersTransaction :: Data.DataHandler.DataMonad [[SqlValue]]
+selectUsersTransaction =  Data.DataHandler.withTrans selectUsersQuery
+
+selectUsersQuery :: IConnection conn => conn -> IO [[SqlValue]]
+selectUsersQuery connection = do 
+  query <- quickQuery' connection "SELECT * from users" []
+  print query
+  return query

@@ -16,6 +16,7 @@ main = do
     Just configuration -> do
       app <- Web.buildApp configuration
       Warp.run port app
+      --Warp.run port Web.simpleApp
     Nothing -> do
       print "Invalid configuration file"
       return ()

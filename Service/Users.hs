@@ -10,8 +10,8 @@ import qualified Service.ServiceHandler
 getUser = Service.ServiceHandler.ServiceCall {
   Service.ServiceHandler.name = "getUser",
   Service.ServiceHandler.execution = do
-    users <- Data.Users.getUsers
-    return $ head users
+    users <- Service.ServiceHandler.dataCall Data.Users.getUsersCall
+    return $ show users
   }
   
 

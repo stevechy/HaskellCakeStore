@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Web.WebHelper
-(plainResponse, toBuilder)
+(plainResponse, plainResponseValue, notFoundValue, toBuilder)
 where
 
 import Network.Wai as Wai
@@ -15,6 +15,10 @@ import Data.ByteString.Lazy.UTF8
 
 plainResponse :: BlazeBuilder.Builder ->  Conduit.ResourceT IO Wai.Response
 plainResponse builder = liftIO $ return $ Wai.ResponseBuilder HTTPTypes.ok200 [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder
+
+plainResponseValue builder = Wai.ResponseBuilder HTTPTypes.ok200 [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder
+
+notFoundValue builder = Wai.ResponseBuilder HTTPTypes.notFound404  [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder 
 
 toBuilder :: [String] -> BlazeBuilder.Builder
 toBuilder content = mconcat (map (fromLazyByteString . fromString) content)

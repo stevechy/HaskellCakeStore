@@ -4,7 +4,8 @@ module Service.ServiceHandler
 (handle,
 logHandle,
 ServiceCall(..),
-setupServiceMonad)
+setupServiceMonad,
+dataCall)
 where
 
 import Control.Monad.Operational
@@ -30,6 +31,8 @@ data ServiceCall a = ServiceCall { name :: String, execution :: ServiceMonad a }
 data ServiceInstruction a
     where CallService :: ServiceCall a -> ServiceInstruction a
           CallData :: Data.DataHandler.DataCall a -> ServiceInstruction a
+
+dataCall dataCall = singleton $ CallData dataCall
 
 type ServiceMonad a = Program ServiceInstruction a
 
