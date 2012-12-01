@@ -27,3 +27,8 @@ executable databaseSetup
                   yaml == 0.8.1,
                   aeson == 0.6.0.2,
                   ghc-prim
+
+executable tests
+   main-is: RunTests.hs
+   build-depends: HUnit == 1.2.4.2
+
