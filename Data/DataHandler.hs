@@ -2,7 +2,9 @@
 
 module Data.DataHandler
 (handle,
+ handleWithConfiguration,
  setupDataMonad,
+ databaseFile,
 DataCall(..),
 DataConfiguration,
 DataMonad,
@@ -19,6 +21,10 @@ import qualified Configuration.Types
 
 handle :: DataCall a -> IO a
 handle (DataCall {execution = exec }) = runDataMonad exec
+
+handleWithConfiguration :: DataConfiguration -> DataCall a -> IO a
+handleWithConfiguration dataConfiguration (DataCall {execution = exec }) = runDataMonadWithConfiguration dataConfiguration exec 
+
 
 data DataCall a = DataCall { name :: String, execution :: DataMonad a}
 
@@ -47,6 +53,21 @@ runDataMonad = eval.view
         conn <- connectSqlite3 "cakeStore.db"
         result <- trans conn
         runDataMonad $ k result 
+        
+runDataMonadWithConfiguration :: DataConfiguration -> DataMonad a -> IO a
+runDataMonadWithConfiguration dataConfiguration = eval.view
+  where 
+    eval :: ProgramView (DataInstruction) a -> IO a
+    eval (Return x) = return x
+    eval (CallData (DataCall {execution=exec}) :>>= k )  = 
+      do
+        result <- runDataMonadWithConfiguration dataConfiguration exec
+        runDataMonadWithConfiguration dataConfiguration $ k result
+    eval ((WithTransaction trans) :>>= k)  =
+      do
+        conn <- connectSqlite3 $ databaseFile $ dataConfiguration
+        result <- trans conn
+        runDataMonadWithConfiguration dataConfiguration $ k result 
     
 testTrans :: DataInstruction a -> IO ()
 testTrans dataInstruction = 
@@ -60,7 +81,7 @@ testTrans dataInstruction =
         
 setupDataMonad :: Configuration.Types.Configuration -> IO (TVar DataConfiguration)
 setupDataMonad config = do
-  configuration <- atomically $ newTVar $ DataConfiguration { databaseFile =  "config" }
+  configuration <- atomically $ newTVar $ DataConfiguration { databaseFile =  Configuration.Types.databaseFile $ config  }
   return configuration
   
   
