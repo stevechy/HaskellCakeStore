@@ -24,6 +24,4 @@ selectUsersTransaction =  Data.DataHandler.withTrans selectUsersQuery
 
 selectUsersQuery :: IConnection conn => conn -> IO [[SqlValue]]
 selectUsersQuery connection = do 
-  query <- quickQuery' connection "SELECT * from users" []
-  print query
-  return query
+  quickQuery' connection "SELECT * from users" []

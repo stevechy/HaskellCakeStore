@@ -69,15 +69,6 @@ runDataMonadWithConfiguration dataConfiguration = eval.view
         result <- trans conn
         runDataMonadWithConfiguration dataConfiguration $ k result 
     
-testTrans :: DataInstruction a -> IO ()
-testTrans dataInstruction = 
-  do
-    conn <- connectSqlite3 "test.db"
-    case dataInstruction of 
-      WithTransaction trans -> do 
-        withTransaction conn trans
-        return ()
-      _ -> return ()
         
 setupDataMonad :: Configuration.Types.Configuration -> IO (TVar DataConfiguration)
 setupDataMonad config = do

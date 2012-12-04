@@ -1,10 +1,10 @@
 import Test.HUnit
 
 import qualified Tests.DataTest
+import qualified Tests.ServiceTest
 
-test1 = TestCase (assertEqual "Equal" (1,2) (3,4))
-
-tests = TestList [TestLabel "test1" test1, TestLabel "data tests" Tests.DataTest.tests ]
+tests = TestList [TestLabel "data tests" Tests.DataTest.tests, TestLabel "service tests" Tests.ServiceTest.tests]
 
 main = runTestTT tests
+
 

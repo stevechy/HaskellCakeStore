@@ -2,6 +2,7 @@
 
 module Service.ServiceHandler
 (handle,
+ handleWithConfiguration,
 logHandle,
 ServiceCall(..),
 setupServiceMonad,
@@ -21,6 +22,9 @@ logHandle :: ServiceCall a -> IO a
 logHandle call = do
     print $ name call
     handle call
+    
+handleWithConfiguration :: ServiceConfiguration -> ServiceCall a -> IO a    
+handleWithConfiguration configuration (ServiceCall {execution = exec })  = runServiceMonadWithConfiguration configuration exec
 
 
 data ServiceConfiguration = ServiceConfiguration { dataConfiguration :: TVar Data.DataHandler.DataConfiguration }
@@ -47,6 +51,19 @@ runServiceMonad = eval . view
     eval (CallData call :>>= k) = do
       result <- Data.DataHandler.handle call  
       runServiceMonad $ k result
+      
+runServiceMonadWithConfiguration :: ServiceConfiguration -> ServiceMonad a -> IO a
+runServiceMonadWithConfiguration configuration = eval . view
+  where
+    eval :: ProgramView (ServiceInstruction) a -> IO a
+    eval (Return x) = return x
+    eval (CallService (ServiceCall {execution=exec}) :>>= k) = do  
+      result <- runServiceMonadWithConfiguration configuration exec
+      runServiceMonadWithConfiguration configuration $ k result
+    eval (CallData call :>>= k) = do
+      currentDataConfiguration <- atomically $ readTVar $ dataConfiguration $ configuration
+      result <- Data.DataHandler.handleWithConfiguration currentDataConfiguration call  
+      runServiceMonadWithConfiguration configuration $ k result
 
 
 setupServiceMonad :: Configuration.Types.Configuration ->  TVar Data.DataHandler.DataConfiguration -> IO ServiceConfiguration
