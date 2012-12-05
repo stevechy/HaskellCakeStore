@@ -5,7 +5,7 @@ where
 
 import Network.Wai as Wai
 import qualified Web.Handler.HomePage as HomePage
-import Web.HandlerMonad as HandlerMonad
+import Web.WebHandler as WebHandler
 import qualified Data.Conduit as Conduit
 import qualified Configuration.Types
 import qualified Data.DataHandler
@@ -23,7 +23,7 @@ buildApp configuration = do
 
 app :: Wai.Application
 app request = case pathInfo request of
-  [] -> HandlerMonad.runHandlerMonad HomePage.handleMonad
+  [] -> WebHandler.runHandlerMonad HomePage.handleMonad
   path@_ -> do
     lift $ print $ "Not found " ++ (show path)
     return $ Web.WebHelper.notFoundValue $ Web.WebHelper.toBuilder ["Not Found"]

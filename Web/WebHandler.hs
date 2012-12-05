@@ -1,11 +1,12 @@
 {-# LANGUAGE GADTs #-}
 
-module Web.HandlerMonad
+module Web.WebHandler
 (renderView, 
 HandlerMonad,
 runHandlerMonad,
 callService,
-simpleResponse)
+setupHandlerMonad,
+handleMonadWithConfiguration)
 where
 
 import Control.Monad.Operational
@@ -19,6 +20,12 @@ import Data.Monoid
 import Data.ByteString.Lazy.UTF8
 import Web.WebHelper as WebHelper
 import qualified Service.ServiceHandler as ServiceHandler
+import qualified Configuration.Types
+
+handleMonadWithConfiguration :: WebConfiguration -> HandlerMonad a -> Conduit.ResourceT IO Wai.Response
+handleMonadWithConfiguration configuration handlerMonad = runHandlerMonadWithConfigurationAndState configuration mempty handlerMonad
+
+data WebConfiguration = WebConfiguration { serviceConfiguration :: ServiceHandler.ServiceConfiguration}
 
 data HandlerInstruction a
    where RenderView :: BlazeBuilder.Builder -> HandlerInstruction ()
@@ -42,10 +49,21 @@ runHandlerMonadWithState state = eval . view
 		     callResult <- liftIO $ runServiceCall call
 		     runHandlerMonadWithState state $ k $ callResult
 
+runHandlerMonadWithConfigurationAndState :: WebConfiguration -> BlazeBuilder.Builder -> HandlerMonad a -> Conduit.ResourceT IO Wai.Response
+runHandlerMonadWithConfigurationAndState configuration state = eval . view
+		where 
+		eval :: ProgramView (HandlerInstruction) a -> Conduit.ResourceT IO Wai.Response
+		eval (Return x) = plainResponse $ state
+		eval (RenderView s :>>= k) = runHandlerMonadWithState (mappend state s) $ k $ () 
+                eval (CallService call :>>= k) = do
+		     callResult <- liftIO $ runServiceCall call
+		     runHandlerMonadWithState state $ k $ callResult
+
+setupHandlerMonad :: Configuration.Types.Configuration -> ServiceHandler.ServiceConfiguration -> IO WebConfiguration
+setupHandlerMonad configuration serviceConfig = do 
+  return WebConfiguration { serviceConfiguration = serviceConfig }
 
 runServiceCall :: ServiceHandler.ServiceCall a -> IO a
 runServiceCall call = ServiceHandler.handle call
 
-simpleResponse :: Wai.Response 
-simpleResponse = plainResponseValue $ toBuilder $ ["Hi", "Bye"]
 
