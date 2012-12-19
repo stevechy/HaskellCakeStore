@@ -16,8 +16,10 @@ import Data.ByteString.Lazy.UTF8
 plainResponse :: BlazeBuilder.Builder ->  Conduit.ResourceT IO Wai.Response
 plainResponse builder = liftIO $ return $ Wai.ResponseBuilder HTTPTypes.ok200 [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder
 
+plainResponseValue :: Builder -> Response
 plainResponseValue builder = Wai.ResponseBuilder HTTPTypes.ok200 [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder
 
+notFoundValue :: Builder -> Response
 notFoundValue builder = Wai.ResponseBuilder HTTPTypes.notFound404  [(Network.HTTP.Types.Header.hContentType, "text/html" )] builder 
 
 toBuilder :: [String] -> BlazeBuilder.Builder

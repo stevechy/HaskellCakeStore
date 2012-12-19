@@ -3,6 +3,7 @@ import qualified Web.HaskellCakeStoreWeb as Web
 import qualified Configuration.Util
 import System.Environment
 
+port :: Warp.Port
 port = 8080
 
 main :: IO ()

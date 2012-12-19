@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 
 module Data.DataHandler
-(handle,
+(
  handleWithConfiguration,
  setupDataMonad,
  databaseFile,
@@ -19,12 +19,9 @@ import Database.HDBC.Sqlite3
 import Control.Concurrent.STM
 import qualified Configuration.Types
 
-handle :: DataCall a -> IO a
-handle (DataCall {execution = exec }) = runDataMonad exec
 
 handleWithConfiguration :: DataConfiguration -> DataCall a -> IO a
 handleWithConfiguration dataConfiguration (DataCall {execution = exec }) = runDataMonadWithConfiguration dataConfiguration exec 
-
 
 data DataCall a = DataCall { name :: String, execution :: DataMonad a}
 

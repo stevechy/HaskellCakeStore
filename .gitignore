@@ -3,3 +3,4 @@
 *.yaml~
 *.sh~
 dist
+sandbox/sandboxData

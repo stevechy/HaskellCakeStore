@@ -7,6 +7,7 @@ where
 import qualified Data.Users
 import qualified Service.ServiceHandler
   
+getUser :: Service.ServiceHandler.ServiceCall String  
 getUser = Service.ServiceHandler.ServiceCall {
   Service.ServiceHandler.name = "getUser",
   Service.ServiceHandler.execution = do

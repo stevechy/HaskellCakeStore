@@ -13,17 +13,17 @@ import qualified Service.ServiceHandler
 import Control.Monad.Trans.Class (lift)
 import qualified Web.WebHelper
 
-data AppConfiguration a = AppConfiguration { responseHandler ::  (HandlerMonad a -> Conduit.ResourceT IO Wai.Response) }
 
 buildApp :: Configuration.Types.Configuration -> IO ( Wai.Application )
 buildApp configuration = do
   dataConfiguration <- Data.DataHandler.setupDataMonad configuration
-  serviceHandler <- Service.ServiceHandler.setupServiceMonad configuration dataConfiguration
-  return app
+  serviceConfiguration <- Service.ServiceHandler.setupServiceMonad configuration dataConfiguration
+  webConfiguration <- WebHandler.setupHandlerMonad configuration serviceConfiguration 
+  return $ app webConfiguration
 
-app :: Wai.Application
-app request = case pathInfo request of
-  [] -> WebHandler.runHandlerMonad HomePage.handleMonad
+app :: WebHandler.WebConfiguration ->  Wai.Application
+app webConfiguration request = case pathInfo request of
+  [] -> WebHandler.handleMonadWithConfiguration webConfiguration HomePage.handleMonad
   path@_ -> do
     lift $ print $ "Not found " ++ (show path)
     return $ Web.WebHelper.notFoundValue $ Web.WebHelper.toBuilder ["Not Found"]

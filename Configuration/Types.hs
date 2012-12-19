@@ -3,7 +3,7 @@
 module Configuration.Types where
 
 import GHC.Generics (Generic)
-import Data.Aeson (FromJSON, ToJSON, decode, encode)
+import Data.Aeson (FromJSON, ToJSON)
 
 
 data Configuration = Configuration { databaseFile :: String }

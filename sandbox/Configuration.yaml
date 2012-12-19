@@ -1,1 +1,1 @@
-databaseFile: cakeStore.db
+databaseFile: sandboxData/cakeStore.sqlite3
