@@ -23,7 +23,7 @@ runConfiguration configuration = do
      disconnect conn
 
 createTest tables conn =     
-    if not $ elem "test" tables
+    if not $ elem "users" tables
          then do
                 run conn "CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(256))" []
                 run conn "INSERT INTO users (name) VALUES ('DatabaseBob')" []
