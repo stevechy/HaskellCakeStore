@@ -15,6 +15,7 @@ where
 import Control.Monad.Operational
 import qualified Configuration.Types
 import Database.HDBC.Sqlite3
+import Database.HDBC
 import Control.Concurrent.STM
 
 
@@ -46,7 +47,7 @@ runDataMonadWithConfiguration dataConfiguration = eval.view
     eval ((WithTransaction trans) :>>= k)  =
       do
         conn <- connectSqlite3 $ databaseFile $ dataConfiguration
-        result <- trans conn
+        result <- withTransaction conn trans 
         runDataMonadWithConfiguration dataConfiguration $ k result 
     
         

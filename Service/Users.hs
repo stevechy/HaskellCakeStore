@@ -1,19 +1,25 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 
 module Service.Users
-(getUser)
+(getUser,addUser)
 where
   
 import qualified Data.Users
-import qualified Service.ServiceHandler
+import Service.ServiceHandler
   
-getUser :: Service.ServiceHandler.ServiceCall String  
-getUser = Service.ServiceHandler.ServiceCall {
+getUser :: ServiceCall String  
+getUser = ServiceCall {
   Service.ServiceHandler.name = "getUser",
   Service.ServiceHandler.execution = do
-    users <- Service.ServiceHandler.dataCall Data.Users.getUsersCall
+    users <- dataCall Data.Users.getUsersCall
     return $ show users
   }
   
 
-
+addUser :: String -> ServiceCall ()  
+addUser username  = ServiceCall {
+  name = "getUser",
+  execution = do
+    dataCall $ Data.Users.addUser username
+    return ()
+  }
