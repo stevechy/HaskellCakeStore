@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction  #-}
 module Data.Users
-(getUsers, getUsersCall)
+(getUsersCall)
 
 where
   
@@ -8,13 +8,13 @@ where
 import Database.HDBC 
 import qualified Data.DataHandler
 
-getUsers = return ["User1", "User2"]
-
+getUsersCall :: Data.DataHandler.DataCall [[SqlValue]]
 getUsersCall = Data.DataHandler.DataCall {
   Data.DataHandler.name = "getUsersCall",
   Data.DataHandler.execution = selectUsers
   }
-
+               
+selectUsers :: Data.DataHandler.DataMonad [[SqlValue]]
 selectUsers = do
   users <- selectUsersTransaction
   return users

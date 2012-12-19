@@ -14,10 +14,8 @@ where
   
 import Control.Monad.Operational
 import qualified Configuration.Types
-import Database.HDBC 
 import Database.HDBC.Sqlite3
 import Control.Concurrent.STM
-import qualified Configuration.Types
 
 
 handleWithConfiguration :: DataConfiguration -> DataCall a -> IO a
@@ -35,21 +33,6 @@ type DataMonad a = Program DataInstruction a
 
 withTrans :: (Connection -> IO a) -> DataMonad a 
 withTrans transactionSection = singleton $ WithTransaction transactionSection 
-
-runDataMonad :: DataMonad a -> IO a
-runDataMonad = eval.view
-  where 
-    eval :: ProgramView (DataInstruction) a -> IO a
-    eval (Return x) = return x
-    eval (CallData (DataCall {execution=exec}) :>>= k )  = 
-      do
-        result <- runDataMonad exec
-        runDataMonad $ k result
-    eval ((WithTransaction trans) :>>= k)  =
-      do
-        conn <- connectSqlite3 "cakeStore.db"
-        result <- trans conn
-        runDataMonad $ k result 
         
 runDataMonadWithConfiguration :: DataConfiguration -> DataMonad a -> IO a
 runDataMonadWithConfiguration dataConfiguration = eval.view

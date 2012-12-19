@@ -6,7 +6,6 @@ where
 import Network.Wai as Wai
 import qualified Web.Handler.HomePage as HomePage
 import Web.WebHandler as WebHandler
-import qualified Data.Conduit as Conduit
 import qualified Configuration.Types
 import qualified Data.DataHandler
 import qualified Service.ServiceHandler 

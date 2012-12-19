@@ -1,21 +1,16 @@
-{-# LANGUAGE OverloadedStrings #-}
 
 module Web.Handler.HomePage
 (handleMonad)
 where
 
-import qualified Web.WebHelper as WebHelper
 import qualified Web.View.HomePage as HomePageView
-import qualified Service.Users as Users
-import qualified Web.WebHandler as WebHandler
-import Data.ByteString.Lazy.UTF8
 import qualified Service.Users
+import qualified Web.WebHandler
 
-
-handleMonad :: WebHandler.HandlerMonad ()
+handleMonad :: Web.WebHandler.HandlerMonad ()
 handleMonad = do
-      user <- WebHandler.callService Service.Users.getUser
-      WebHandler.renderView $ HomePageView.render $ user
+      user <- Web.WebHandler.callService Service.Users.getUser
+      Web.WebHandler.renderView $ HomePageView.render $ user
       return ()
 
 
