@@ -24,12 +24,9 @@ getUsersCall = Data.DataHandler.DataCall {
                
 selectUsers :: Data.DataHandler.DataMonad [[SqlValue]]
 selectUsers = do
-  users <- selectUsersTransaction
+  users <-  Data.DataHandler.withTrans selectUsersQuery 
   return users
   
-selectUsersTransaction :: Data.DataHandler.DataMonad [[SqlValue]]
-selectUsersTransaction =  Data.DataHandler.withTrans selectUsersQuery
-
 selectUsersQuery :: IConnection conn => conn -> IO [[SqlValue]]
 selectUsersQuery connection = do 
   quickQuery' connection "SELECT * from users" []

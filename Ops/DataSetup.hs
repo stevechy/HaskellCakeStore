@@ -22,12 +22,17 @@ runConfiguration configuration = do
      withTransaction conn $ createTest tables
      disconnect conn
 
-createTest tables conn =     
+createTest tables conn = do    
     if not $ elem "users" tables
          then do
                 run conn "CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(256))" []
                 run conn "INSERT INTO users (name) VALUES ('DatabaseBob')" []
                 query <- quickQuery' conn "SELECT * from users where id < 2" []
                 print query
+                return ()
+         else return ()
+    if not $ elem "cakes" tables
+         then do
+                run conn "CREATE TABLE cakes (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(256))" []               
                 return ()
          else return ()
