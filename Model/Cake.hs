@@ -1,6 +1,10 @@
+{-# LANGUAGE DeriveDataTypeable #-}
+
 module Model.Cake
 (Cake(..))
 where
   
-data Cake = Cake { id:: Integer, name :: String } deriving (Show,Eq)
+import Data.Typeable  
+  
+data Cake = Cake { id:: Integer, name :: String } deriving (Show,Eq, Typeable)
 

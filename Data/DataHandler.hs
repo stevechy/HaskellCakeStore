@@ -8,7 +8,8 @@ module Data.DataHandler
 DataCall(..),
 DataConfiguration,
 DataMonad,
-withTrans)
+withTrans,
+provideBlank)
 where
 
   
@@ -17,12 +18,14 @@ import qualified Configuration.Types
 import Database.HDBC.Sqlite3
 import Database.HDBC
 import Control.Concurrent.STM
-
+import Data.Typeable
+import Data.Dynamic
+import Control.Exception
 
 handleWithConfiguration :: DataConfiguration -> DataCall a -> IO a
 handleWithConfiguration dataConfiguration (DataCall {execution = exec }) = runDataMonadWithConfiguration dataConfiguration exec 
 
-data DataCall a = DataCall { name :: String, execution :: DataMonad a}
+data DataCall a = Typeable a => DataCall { name :: String, execution :: DataMonad a, provideResult :: Dynamic -> a}
 
 data DataConfiguration = DataConfiguration { databaseFile :: String }
 
@@ -31,6 +34,10 @@ data DataInstruction a
           WithTransaction :: (Connection -> IO a) -> DataInstruction a
 
 type DataMonad a = Program DataInstruction a
+
+provideBlank :: Typeable a => Dynamic -> a
+provideBlank dynamic = let Just value = fromDynamic dynamic 
+                       in value
 
 withTrans :: (Connection -> IO a) -> DataMonad a 
 withTrans transactionSection = singleton $ WithTransaction transactionSection 
@@ -46,8 +53,9 @@ runDataMonadWithConfiguration dataConfiguration = eval.view
         runDataMonadWithConfiguration dataConfiguration $ k result
     eval ((WithTransaction trans) :>>= k)  =
       do
-        conn <- connectSqlite3 $ databaseFile $ dataConfiguration
-        result <- withTransaction conn trans 
+        result <- bracket (connectSqlite3 $ databaseFile $ dataConfiguration)
+                          (\conn -> disconnect conn)
+                          (\conn -> withTransaction conn trans )
         runDataMonadWithConfiguration dataConfiguration $ k result 
     
         

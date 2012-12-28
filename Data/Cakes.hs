@@ -18,6 +18,8 @@ getCakes = Data.DataHandler.DataCall {
           results <- quickQuery' connection "SELECT id, name from cakes" []
           return $ map unmarshallCake results
     Data.DataHandler.withTrans getCakesTrans
+  ,
+  Data.DataHandler.provideResult = Data.DataHandler.provideBlank
   }
   
 addCake :: String -> Data.DataHandler.DataCall Integer
@@ -26,5 +28,7 @@ addCake name = Data.DataHandler.DataCall {
   Data.DataHandler.execution = do
     let addCakesTrans connection =  run connection ("INSERT INTO cakes (name) VALUES ('"++name++"')") []
     Data.DataHandler.withTrans addCakesTrans
+  ,
+  Data.DataHandler.provideResult = Data.DataHandler.provideBlank
   }
     

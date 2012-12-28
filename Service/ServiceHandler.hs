@@ -5,6 +5,7 @@ module Service.ServiceHandler
  handleWithConfiguration,
 ServiceCall(..),
 ServiceConfiguration,
+ServiceInstruction(..),
 setupServiceMonad,
 dataCall)
 where
