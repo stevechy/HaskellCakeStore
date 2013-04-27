@@ -21,7 +21,10 @@ executable cakeStore
                    utf8-string == 0.3.7,
                    operational == 0.2.1.3,
                    stm == 2.2.0.1,
-                   text == 0.11.1.13
+                   text == 0.11.1.13,
+                   hslogger == 1.2.1,
+                   resource-pool == 0.2.1.1,
+                   time == 1.4
 
 executable databaseSetup
    main-is: Ops/DataSetup.hs

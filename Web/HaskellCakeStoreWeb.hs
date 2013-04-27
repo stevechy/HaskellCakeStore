@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
 
 module Web.HaskellCakeStoreWeb
 ( app, buildApp )
@@ -14,6 +14,11 @@ import qualified Data.DataHandler
 import qualified Service.ServiceHandler 
 import Control.Monad.Trans.Class (lift)
 import qualified Web.WebHelper
+import Data.Dynamic
+import System.Log.Logger
+
+data Logger = Logger deriving Typeable
+logger = "Web.HaskellCakeStoreWeb."++ (show $ typeOf Logger)
 
 
 buildApp :: Configuration.Types.Configuration -> IO ( Wai.Application )
@@ -28,7 +33,7 @@ app webConfiguration request = case pathInfo request of
   [] -> WebHandler.handleMonadWithConfiguration webConfiguration HomePage.handleMonad
   "cakes" : rest -> WebHandler.handleMonadWithConfiguration webConfiguration $  Web.Handler.CakesPage.route rest
   path@_ -> do
-    lift $ print $ "Not found " ++ (show path)
+    lift $ warningM logger $ "Not found " ++ (show path)
     return $ Web.WebHelper.notFoundValue $ Web.WebHelper.toBuilder ["Not Found"]
 
 

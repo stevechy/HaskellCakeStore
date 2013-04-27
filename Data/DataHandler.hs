@@ -21,13 +21,16 @@ import Control.Concurrent.STM
 import Data.Typeable
 import Data.Dynamic
 import Control.Exception
+import Data.Pool
+import Data.Time.Clock
+
 
 handleWithConfiguration :: DataConfiguration -> DataCall a -> IO a
 handleWithConfiguration dataConfiguration (DataCall {execution = exec }) = runDataMonadWithConfiguration dataConfiguration exec 
 
 data DataCall a = Typeable a => DataCall { name :: String, execution :: DataMonad a, provideResult :: Dynamic -> a}
 
-data DataConfiguration = DataConfiguration { databaseFile :: String }
+data DataConfiguration = DataConfiguration { databaseFile :: String , databasePool :: Pool (Connection)}
 
 data DataInstruction a 
     where CallData :: DataCall a -> DataInstruction a
@@ -53,15 +56,19 @@ runDataMonadWithConfiguration dataConfiguration = eval.view
         runDataMonadWithConfiguration dataConfiguration $ k result
     eval ((WithTransaction trans) :>>= k)  =
       do
-        result <- bracket (connectSqlite3 $ databaseFile $ dataConfiguration)
-                          (\conn -> disconnect conn)
+        result <- withResource (databasePool dataConfiguration)
                           (\conn -> withTransaction conn trans )
         runDataMonadWithConfiguration dataConfiguration $ k result 
     
+connectToDatabase databaseFile = connectSqlite3 $ databaseFile 
+closeConnection conn =  disconnect conn
         
 setupDataMonad :: Configuration.Types.Configuration -> IO (TVar DataConfiguration)
 setupDataMonad config = do
-  configuration <- atomically $ newTVar $ DataConfiguration { databaseFile =  Configuration.Types.databaseFile $ config  }
+  let databaseFile = Configuration.Types.databaseFile config
+  connectionPool <- createPool (connectToDatabase databaseFile) closeConnection 1 (fromInteger 1) 10
+  let dataConfiguration = DataConfiguration { databaseFile = databaseFile , databasePool = connectionPool  }
+  configuration <- atomically $ newTVar $ dataConfiguration
   return configuration
   
   
