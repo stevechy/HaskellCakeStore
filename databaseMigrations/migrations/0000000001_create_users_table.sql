@@ -1,0 +1,3 @@
+CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(256));
+INSERT INTO users (name) VALUES ('DatabaseBob');
+
